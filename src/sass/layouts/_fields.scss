@@ -26,6 +26,13 @@ form {
       background-color: transparent;
       color: $text-main-c;
     }
+
+
+    .error-message {
+      color: $error-c;
+      display: block;
+      margin-top: 4px;
+    }
   }
   button {
     font-size: 18px;

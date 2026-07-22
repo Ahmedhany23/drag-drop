@@ -9,14 +9,14 @@ import { validation } from "./validation_types";
 
 export const assignValidateInputs = (titleValue: string, descValue: string) => {
   const titleInputRule: validation = {
-    type: "text",
+    type: "Title",
     value: titleValue,
     required: true,
     minLength: 2,
     maxLength: 50,
   };
   const descInputRule: validation = {
-    type: "text",
+    type: "Description",
     value: descValue,
     required: true,
     minLength: 2,
@@ -32,26 +32,18 @@ export const assignValidateInputs = (titleValue: string, descValue: string) => {
  *  */
 
 export const handleValidationErrors = (inputRule: validation): string => {
-  let errorMessage: string = "";
-  // required
-  if (inputRule.required && inputRule.value.trim().length === 0) {
-    errorMessage = `${inputRule.type} is required.`;
+  const trimmedValue = inputRule.value.trim();
+
+  // Validations
+  if (inputRule.required && trimmedValue.length === 0) {
+    return `${inputRule.type} is required.`;
+  }
+  if (inputRule.minLength && trimmedValue.length < inputRule.minLength) {
+    return `${inputRule.type} must be at least ${inputRule.minLength} characters.`;
+  }
+  if (inputRule.maxLength && trimmedValue.length > inputRule.maxLength) {
+    return `${inputRule.type} must be no more than ${inputRule.maxLength} characters.`;
   }
 
-  // min length
-  if (
-    inputRule.minLength &&
-    inputRule.value.trim().length < inputRule.minLength
-  ) {
-    errorMessage = `${inputRule.type} must be at least ${inputRule.minLength} characters long.`;
-  }
-  // max length
-  if (
-    inputRule.maxLength &&
-    inputRule.value.trim().length > inputRule.maxLength
-  ) {
-    errorMessage = `${inputRule.type} must be no more than ${inputRule.maxLength} characters long.`;
-  }
-
-  return errorMessage;
+  return "";
 };
