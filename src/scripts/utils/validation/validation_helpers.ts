@@ -7,7 +7,22 @@ import { validation } from "./validation_types";
  * @returns [titleInputRule, descInputRule]: validation[]
  */
 
-export const assignValidateInputs = (titleValue: string, descValue: string) => {
+export const assignListValidateInputs = (titleValue: string) => {
+  const titleInputRule: validation = {
+    type: "Title",
+    value: titleValue,
+    required: true,
+    minLength: 2,
+    maxLength: 50,
+  };
+  return [titleInputRule];
+};
+
+export const assignProjectValidateInputs = (
+  titleValue: string,
+  descValue: string,
+  
+) => {
   const titleInputRule: validation = {
     type: "Title",
     value: titleValue,

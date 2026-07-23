@@ -1,18 +1,45 @@
 @use "../vars/radius" as *;
 @use "../vars/colors" as *;
-.projects {
-  max-width: 300px;
-  min-width: 230px;
-  text-align: center;
-  margin: 10px;
-  .title-header {
-    background-color: $bg-main-c;
-    border-radius: $small-r;
-    padding: 10px;
-    .title {
-      font-weight: 700;
-      font-size: 20px;
-      text-transform: capitalize;
+.projects-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  .projects {
+    max-width: 300px;
+    min-width: 230px;
+    text-align: center;
+    margin: 10px;
+    .title-header {
+      background-color: $bg-main-c;
+      border-radius: $small-r;
+      padding: 10px;
+      .title {
+        font-weight: 700;
+        font-size: 20px;
+        text-transform: capitalize;
+      }
+    }
+
+    .project_icons {
+      display: flex;
+      justify-content: end;
+      margin-top: 10px;
+      button {
+        border-width: 0;
+        outline-width: 0;
+        cursor: pointer;
+        margin: 0px 2px;
+        background-color: initial;
+        font-size: 18px;
+      }
+      button.delete {
+        color: $error-c;
+      }
+      button.edit {
+        color: $text-main-c;
+      }
+      button.add {
+        color: $text-main-c;
+      }
     }
   }
 }

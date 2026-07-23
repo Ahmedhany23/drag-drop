@@ -13,7 +13,11 @@ export class Base<T extends HTMLElement> {
       this._templateId,
       this._hostId,
     );
-    
+
+    if (!template) {
+      throw new Error(`Template with id "${this._templateId}" not found.`);
+    }
+
     const templateContent = document.importNode(template.content, true);
 
     this.element = templateContent.firstElementChild! as T;
@@ -35,13 +39,13 @@ export class Base<T extends HTMLElement> {
     templateId: string,
     hostId: string,
   ): [HTMLTemplateElement, HTMLDivElement] {
-    this._template = document.getElementById(
-      templateId,
-    )! as HTMLTemplateElement;
-    this._hostElement = document.getElementById(hostId)! as HTMLDivElement;
+    this._template = document.getElementById(templateId) as HTMLTemplateElement;
+    this._hostElement = document.getElementById(hostId) as HTMLDivElement;
+
+    if (!this._hostElement) {
+      throw new Error(`Host element with id "${hostId}" not found.`);
+    }
 
     return [this._template, this._hostElement];
   }
-
-  
 }

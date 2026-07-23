@@ -1,15 +1,19 @@
 import { autoBind } from "../decorators/autoBind.js";
 import { ProjectRules } from "../store/ProjectRules.js";
 import { projectState } from "../store/ProjectState.js";
-import { projectStatus } from "../utils/project-status.js";
+import { Ilist } from "../utils/list.types.js";
 import { Base } from "./Base.js";
 import { Project } from "./Project.js";
 
 export class ProjectsList extends Base<HTMLDivElement> {
-  constructor(private _status: "Intial" | "Active" | "Finished") {
-    super("project-list", "app", "beforeend", `${_status}-projects`);
+  constructor(private _list: Ilist) {
+    super("project-list", "projects", "beforeend", `${_list.id}-projects`);
 
     this.renderProjectList();
+
+    this._deleteList();
+
+    this._editList();
 
     // * when refresh page get all projects from localStorage and show them
 
@@ -37,9 +41,55 @@ export class ProjectsList extends Base<HTMLDivElement> {
       ".projects-list",
     )! as HTMLUListElement;
 
-    list.id = `${this._status}-list`;
+    list.id = `${this._list.id}-list`;
 
-    title.textContent = `${this._status} Projects`;
+    title.textContent = `${this._list.title} Projects`;
+  }
+
+  /**
+   * @desc delete List
+   */
+
+  private _deleteList(): void {
+    const deleteButton = this.element.querySelector(
+      ".delete",
+    )! as HTMLButtonElement;
+    deleteButton.addEventListener("click", this._handleDeleteList);
+  }
+
+  /**
+   * @desc delete handler
+   */
+
+  @autoBind
+  private _handleDeleteList(): void {
+    if (confirm("Are you sure you want to delete this list?")) {
+      projectState.deleteList(this._list.id);
+    }
+  }
+
+  /**
+   * @desc delete List
+   */
+
+  private _editList(): void {
+    const editButton = this.element.querySelector(
+      ".edit",
+    )! as HTMLButtonElement;
+    editButton.addEventListener("click", this._handleEditList);
+  }
+
+  /**
+   * @desc edit handler
+   */
+
+  @autoBind
+  private _handleEditList(): void {
+    const title = prompt("Enter new list name", this._list.title);
+
+    if (!title) alert("list name can't be empty");
+
+    projectState.editList(this._list.id, title!);
   }
 
   /**
@@ -58,11 +108,14 @@ export class ProjectsList extends Base<HTMLDivElement> {
 
   private _renderProjects(projects: ProjectRules[]): void {
     const projectsList = document.getElementById(
-      `${this._status}-list`,
+      `${this._list.id}-list`,
     )! as HTMLDivElement;
+
+    if (!projectsList) return;
+
     projectsList.innerHTML = "";
     for (const project of projects) {
-      new Project(`${this._status}-list`, project);
+      new Project(`${this._list.id}-list`, project);
     }
   }
 
@@ -74,13 +127,7 @@ export class ProjectsList extends Base<HTMLDivElement> {
 
   private _filterProjectsStatus(projects: ProjectRules[]) {
     const filteredProjects = projects.filter((project: ProjectRules) => {
-      if (this._status === "Intial") {
-        return project.status === projectStatus.Intial;
-      } else if (this._status === "Active") {
-        return project.status === projectStatus.Active;
-      } else if (this._status === "Finished") {
-        return project.status === projectStatus.Finished;
-      }
+      return project.listId === this._list.id;
     });
     return filteredProjects;
   }
@@ -98,11 +145,8 @@ export class ProjectsList extends Base<HTMLDivElement> {
   @autoBind
   private _handleDrop(event: DragEvent): void {
     const projectId = event.dataTransfer!.getData("text/plain");
-    const newStatus =
-      (this.element.id === "Intial-projects" && projectStatus.Intial) ||
-      (this.element.id === "Active-projects" && projectStatus.Active) ||
-      (this.element.id === "Finished-projects" && projectStatus.Finished);
+    const newListId = this._list.id;
 
-    projectState.changeProjectStatus(projectId, newStatus);
+    projectState.changeProjectStatus(projectId, newListId);
   }
 }
